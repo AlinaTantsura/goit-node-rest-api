@@ -5,7 +5,7 @@ import {
   deleteContact,
   createContact,
   updateContact,
-} from "./controllers/contactsControllers.js";
+} from "../../goit-node-rest-api/controllers/contactsControllers.js";
 
 const contactsRouter = express.Router();
 
