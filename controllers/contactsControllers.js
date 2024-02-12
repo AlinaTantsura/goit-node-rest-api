@@ -46,7 +46,7 @@ export const createContact = async (req, res, next) => {
     try {
         const { error } = createContactSchema.validate(req.body);
         if (error) {
-            res.status(404).json(error.message);
+            res.status(400).json(error.message);
             return;
         }
         const { name, email, phone } = req.body;
@@ -66,7 +66,7 @@ export const updateContact = async (req, res, next) => {
         };
         const reqBody = req.body;
         if (!reqBody.hasOwnProperty("name" || "email" || "phone")) {
-            res.status(400).json("Body must have at least one field");
+            res.status(400).json({message:"Body must have at least one field"});
             return;
         }
         const { error } = updateContactSchema.validate(req.body);
