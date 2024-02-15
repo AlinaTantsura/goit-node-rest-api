@@ -1,6 +1,6 @@
 import HttpError from "../helpers/HttpError.js";
-import { ctrlWrapper } from "../helpers/ctrlWrapper.js";
-import contactsService from "../services/contactsServices.js";
+
+import { Contacts } from "../models/contacts.js";
 
 
 
@@ -74,21 +74,21 @@ import contactsService from "../services/contactsServices.js";
 // };
 
 export const getAllContacts = async (_, res) => {
-    const data = await contactsService.listContacts();
+    const data = await Contacts.find();
     res.status(200).json(data);
 };
-export const getOneContact = async (req, res, next) => {
+export const getOneContact = async (req, res) => {
         const { id } = req.params;
-        const data = await contactsService.getContactById(id);
+        const data = await Contacts.findById(id);
         if (!data) {
             throw HttpError(404)
         }
         res.status(200).json(data)
 };
 
-export const deleteContact = async (req, res, next) => {
+export const deleteContact = async (req, res) => {
         const { id } = req.params;
-        const data = await contactsService.removeContact(id);
+        const data = await Contacts.findByIdAndDelete({_id: id});
         if (!data) {
             throw HttpError(404);
         }
@@ -96,24 +96,38 @@ export const deleteContact = async (req, res, next) => {
 };
 
 
-export const createContact = async (req, res, next) => {
-        const { name, email, phone } = req.body;
-        const contact = await contactsService.addContact(name, email, phone);
+export const createContact = async (req, res) => {
+        const contact = await Contacts.create(req.body);
         res.status(201).json(contact)
 };
 
-export const updateContact = async (req, res, next) => {
+export const updateContact = async (req, res) => {
         const { id } = req.params;
-        const data = await contactsService.getContactById(id);
-        if (!data) {
-            throw HttpError(404)
-        };
-        const reqBody = req.body;
-        const hasOwnProp = reqBody.hasOwnProperty("name") || reqBody.hasOwnProperty("email") || reqBody.hasOwnProperty("phone")
-        if (!hasOwnProp) {
-            throw HttpError(400, "Body must have at least one field")
-        }
-        const { name, email, phone } = req.body;
-        const contact = await contactsService.updateContact(id, {name, email, phone});
+        // const data = await Contacts.findByIdAndUpdate({_id: id}, fields, {new: true});
+        // if (!data) {
+        //     throw HttpError(404)
+        // };
+        // const reqBody = req.body;
+        // const hasOwnProp = reqBody.hasOwnProperty("name") || reqBody.hasOwnProperty("email") || reqBody.hasOwnProperty("phone")
+        // if (!hasOwnProp) {
+        //     throw HttpError(400, "Body must have at least one field")
+        // }
+        // const { name, email, phone } = req.body;
+        const contact = await Contacts.findByIdAndUpdate({_id: id}, req.body, {new: true});
         res.status(200).json(contact)
 };
+
+export const updateStatusContact = async (req, res) => {
+        const { id } = req.params;
+    //     const data = await contactsService.getContactById(id);
+    //     if (!data) {
+    //         throw HttpError(404)
+    //     };
+    // const {favorite} = req.body;
+    //     if (!favorite) {
+    //         throw HttpError(400, "Body must have at least one field")
+    // }
+    const contact = await Contacts.findByIdAndUpdate({_id: id}, req.body, {new: true});
+    res.status(200).json(contact);
+    
+}

@@ -5,9 +5,10 @@ import {
   deleteContact,
   createContact,
   updateContact,
+  updateStatusContact,
 } from "../controllers/contactsControllers.js";
 import { validateBody } from "../helpers/validateBody.js";
-import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
+import { createContactSchema, updateContactSchema, updateStatusContactSchema } from "../models/contacts.js";
 import { ctrlWrapper } from "../helpers/ctrlWrapper.js";
 
 
@@ -32,5 +33,7 @@ contactsRouter.delete("/:id", ctrlWrapper(deleteContact));
 contactsRouter.post("/", validateBody(createContactSchema), ctrlWrapper(createContact));
 
 contactsRouter.put("/:id",validateBody(updateContactSchema), ctrlWrapper(updateContact));
+
+contactsRouter.patch("/:id/favorite",validateBody(updateStatusContactSchema), ctrlWrapper(updateStatusContact))
 
 export default contactsRouter;
