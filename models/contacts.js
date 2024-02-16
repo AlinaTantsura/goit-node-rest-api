@@ -23,8 +23,8 @@ export const Contacts = model("contacts", contactsSchema);
 export const createContactSchema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().required().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
-    phone: Joi.string().required()
-  
+    phone: Joi.string().required(),
+    favorite: Joi.boolean()
 })
 
 export const updateContactSchema = Joi.object({
@@ -34,5 +34,5 @@ export const updateContactSchema = Joi.object({
 })
 
 export const updateStatusContactSchema = Joi.object({
-    favorite: Joi.boolean(),
+    favorite: Joi.boolean().required(),
 })

@@ -25,7 +25,6 @@ app.use((_, res) => {
 
 app.use((err, req, res, next) => {
   const { status = 500, message = "Server error" } = err;
-  console.log("This is a mistake")
   res.status(status).json({ message });
 });
 
@@ -35,6 +34,7 @@ mongoose.connect(DB_HOST).then(() => {
   app.listen(PORT, () => {
   console.log(`Server is running. Use our API on port: ${PORT}`);
 });
-}).catch(error => {
+}).catch((error) => {
+  console.error(error.message);
   process.exit(1)
 });

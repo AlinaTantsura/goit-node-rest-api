@@ -10,30 +10,21 @@ import {
 import { validateBody } from "../helpers/validateBody.js";
 import { createContactSchema, updateContactSchema, updateStatusContactSchema } from "../models/contacts.js";
 import { ctrlWrapper } from "../helpers/ctrlWrapper.js";
+import { isValidId } from "../helpers/isValidId.js";
 
 
 const contactsRouter = express.Router();
 
-// contactsRouter.get("/", getAllContacts);
-
-// contactsRouter.get("/:id", getOneContact);
-
-// contactsRouter.delete("/:id", deleteContact);
-
-// contactsRouter.post("/", validateBody(createContactSchema), createContact);
-
-// contactsRouter.put("/:id",validateBody(updateContactSchema), updateContact);
-
 contactsRouter.get("/", ctrlWrapper(getAllContacts));
 
-contactsRouter.get("/:id", ctrlWrapper(getOneContact));
+contactsRouter.get("/:id", isValidId, ctrlWrapper(getOneContact));
 
-contactsRouter.delete("/:id", ctrlWrapper(deleteContact));
+contactsRouter.delete("/:id", isValidId,  ctrlWrapper(deleteContact));
 
 contactsRouter.post("/", validateBody(createContactSchema), ctrlWrapper(createContact));
 
-contactsRouter.put("/:id",validateBody(updateContactSchema), ctrlWrapper(updateContact));
+contactsRouter.put("/:id",isValidId, validateBody(updateContactSchema), ctrlWrapper(updateContact));
 
-contactsRouter.patch("/:id/favorite",validateBody(updateStatusContactSchema), ctrlWrapper(updateStatusContact))
+contactsRouter.patch("/:id/favorite", isValidId, validateBody(updateStatusContactSchema), ctrlWrapper(updateStatusContact))
 
 export default contactsRouter;
