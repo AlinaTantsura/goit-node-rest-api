@@ -40,4 +40,8 @@ export const registerSchema = Joi.object({
 export const loginSchema = Joi.object({
     password: Joi.string().min(6).required(),
     email: Joi.string().required().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
-})
+});
+
+export const updateSubscriptionSchema = Joi.object({
+    subscription: Joi.string().valid("starter", "pro", "business").required()
+});

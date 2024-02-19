@@ -4,6 +4,7 @@ import 'dotenv/config';
 import jwt from 'jsonwebtoken'
 
 import { Users } from "../models/users.js";
+import { updateContact } from "./contactsControllers.js";
 
 export const registerUser = async (req, res) => {
     const { password, email } = req.body;
@@ -38,7 +39,7 @@ export const loginUser = async (req, res) => {
     const payload = { id: user.id };
     const { SECRET_KEY } = process.env;
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '23h' })
-
+    await Users.findByIdAndUpdate(user._id, {token})
     res.status(200).json({
         "token": token,
         "user": {
@@ -50,9 +51,10 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutUser = async (req, res) => {
-    // const { authorization} = req.headers;
-    // authorization = null;
-    // res.status(204);
+    const { _id } = req.user;
+    await Users.findByIdAndUpdate(_id, { token: null});
+
+    res.status(204).json();
 }
 
 export const getUserByToken = async (req, res) => {
@@ -61,4 +63,14 @@ export const getUserByToken = async (req, res) => {
         "email": email,
         "subscription": subscription
     });
+};
+
+export const updateUserSubscription = async (req, res) => {
+    const { _id } = req.user;
+    const updatedUser = await Users.findByIdAndUpdate(_id, req.body, { new: true });
+    if (!updateContact) {
+        throw HttpError(404);
+    }
+    res.status(200).json(updatedUser);
+
 }

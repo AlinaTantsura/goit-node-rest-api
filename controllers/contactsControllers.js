@@ -4,14 +4,20 @@ import { Contacts } from "../models/contacts.js";
 
 export const getAllContacts = async (req, res) => {
         const { _id: owner } = req.user;
-        const data = await Contacts.find({owner});
+        const { page, limit, favorite } = req.query;
+        const skip = (page - 1) * limit;
+        const data = await Contacts.find({owner},'',{skip, limit}).populate("owner", "email");
+        if (favorite) {
+                const newdata = data.filter(contact => contact.favorite === true)
+                res.status(200).json(newdata)
+        }
+
         res.status(200).json(data);
 };
 export const getOneContact = async (req, res) => {
         const { _id: owner } = req.user;
         const { id } = req.params;
-        const data = await Contacts.findOne({owner, _id:id});
-        // const data = await Contacts.findById(id);
+        const data = await Contacts.findOne({owner, _id:id}).populate('owner', "email");
         if (!data) {
             throw HttpError(404)
         }
@@ -21,8 +27,7 @@ export const getOneContact = async (req, res) => {
 export const deleteContact = async (req, res) => {
         const { _id: owner } = req.user;
         const { id } = req.params;
-        const data = await Contacts.findOneAndDelete({owner, _id:id})
-        // const data = await Contacts.findByIdAndDelete({_id: id});
+        const data = await Contacts.findOneAndDelete({owner, _id:id}).populate('owner', "email")
         if (!data) {
             throw HttpError(404);
         }
@@ -32,7 +37,7 @@ export const deleteContact = async (req, res) => {
 
 export const createContact = async (req, res) => {
         const { _id: owner } = req.user;
-        const contact = await Contacts.create({...req.body, owner});
+        const contact = await Contacts.create({ ...req.body, owner });
         res.status(201).json(contact)
 };
 
@@ -52,8 +57,9 @@ export const updateContact = async (req, res) => {
 };
 
 export const updateStatusContact = async (req, res) => {
+        const { _id: owner } = req.user;
         const { id } = req.params;
-        const contact = await Contacts.findByIdAndUpdate({_id: id}, req.body, {new: true});
+        const contact = await Contacts.findOneAndUpdate({owner, _id: id}, req.body, {new: true});
         if (!contact) {
                 throw HttpError(404)
         }
