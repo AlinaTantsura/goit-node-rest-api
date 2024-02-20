@@ -1,7 +1,8 @@
 import HttpError from "../helpers/HttpError.js";
 import bcrypt from "bcrypt";
 import 'dotenv/config';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import gravatar from 'gravatar';
 
 import { Users } from "../models/users.js";
 import { updateContact } from "./contactsControllers.js";
@@ -12,8 +13,9 @@ export const registerUser = async (req, res) => {
     if (user) {
         throw HttpError(409, "Email in use")
     }
+    // const avatarURL = gravatar.url(email);
     const hashPass = await bcrypt.hash(password, 10);
-    const newUser = await Users.create({ email, password: hashPass });
+    const newUser = await Users.create({ email, password: hashPass, avatarURL });
     res.status(201).json({
         "user": {
             "email": newUser.email,
