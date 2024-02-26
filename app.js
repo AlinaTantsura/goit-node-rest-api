@@ -10,7 +10,7 @@ import { authRouter } from "./routes/auth.js";
 
 const { DB_HOST, PORT } = process.env;
 
-const app = express();
+export const app = express();
 
 app.use(morgan("tiny"));
 app.use(cors());
