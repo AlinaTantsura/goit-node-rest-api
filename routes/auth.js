@@ -14,4 +14,4 @@ authRouter.post("/login", validateBody(loginSchema), ctrlWrapper(loginUser));
 authRouter.post("/logout", auth, ctrlWrapper(logoutUser));
 authRouter.get("/current", auth, ctrlWrapper(getUserByToken));
 authRouter.patch("/", auth, validateBody(updateSubscriptionSchema), ctrlWrapper(updateUserSubscription));
-authRouter.patch("/avatar", auth, upload.single('avatar'), ctrlWrapper(updateAvatar));
+authRouter.patch("/avatars", auth, upload.single('avatar'), ctrlWrapper(updateAvatar));
