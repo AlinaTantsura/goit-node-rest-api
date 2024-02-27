@@ -1,10 +1,16 @@
 import HttpError from "../helpers/HttpError.js";
 import bcrypt from "bcrypt";
 import 'dotenv/config';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import gravatar from 'gravatar';
+import { join } from "path";
+import { rename } from "fs/promises";
+import Jimp from "jimp";
 
 import { Users } from "../models/users.js";
 import { updateContact } from "./contactsControllers.js";
+
+const avatarPath = join(process.cwd(), "./", "public", "avatars");
 
 export const registerUser = async (req, res) => {
     const { password, email } = req.body;
@@ -12,8 +18,9 @@ export const registerUser = async (req, res) => {
     if (user) {
         throw HttpError(409, "Email in use")
     }
+    const avatarURL = gravatar.url(email);
     const hashPass = await bcrypt.hash(password, 10);
-    const newUser = await Users.create({ email, password: hashPass });
+    const newUser = await Users.create({ email, password: hashPass, avatarURL });
     res.status(201).json({
         "user": {
             "email": newUser.email,
@@ -73,4 +80,26 @@ export const updateUserSubscription = async (req, res) => {
     }
     res.status(200).json(updatedUser);
 
+};
+
+export const updateAvatar = async (req, res) => {
+    const { _id } = req.user;
+    console.log(req.file)
+    if (!req.file) {
+        throw HttpError(400, "There is no file in request")
+    }
+    const { path: tempUpload, originalname } = req.file;
+    const image = await Jimp.read(tempUpload);
+    image.resize(250, 250);
+    image.write(tempUpload);
+
+    const filename = `${_id}_${originalname}`
+    const resultUpload = join(avatarPath, filename);
+    await rename(tempUpload, resultUpload);
+    const avatarURL = join("avatars", filename);
+    await Users.findByIdAndUpdate(_id, { avatarURL });
+
+    res.json({
+        avatarURL
+    })
 }
