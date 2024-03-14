@@ -28,4 +28,5 @@ contactsRouter.put("/:id", auth, isValidId, validateBody(updateContactSchema), c
 
 contactsRouter.patch("/:id/favorite", auth, isValidId, validateBody(updateStatusContactSchema), ctrlWrapper(updateStatusContact))
 
+
 export default contactsRouter;
